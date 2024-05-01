@@ -27,6 +27,11 @@ class DBStorage:
 
     def __init__(self):
         """Instantiate a DBStorage object"""
+        HBNB_MYSQL_USER = getenv('HBNB_MYSQL_USER')
+        HBNB_MYSQL_PWD = getenv('HBNB_MYSQL_PWD')
+        HBNB_MYSQL_HOST = getenv('HBNB_MYSQL_HOST')
+        HBNB_MYSQL_DB = getenv('HBNB_MYSQL_DB')
+        HBNB_ENV = getenv('HBNB_ENV')
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
                                       format(getenv('HBNB_MYSQL_USER'),
                                              getenv('HBNB_MYSQL_PWD'),
@@ -75,12 +80,11 @@ class DBStorage:
         or None if not found"""
         if cls is None or id is None:
             return None
-        if isinstance(cls, str):
-            cls = classes.get(cls)
-            if cls is not None:
-                save = self.all(cls)
+        if type(cls) is str:
+            return None
+            cls = classes(cls)
+        save = models.storage.all(cls)
         return save.get("{}.{}".format(cls.__name__, id))
-    return None
 
     def count(self, cls=None):
         """returns the number of objects in storage matching the given class.
